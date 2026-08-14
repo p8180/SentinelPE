@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# IDE / editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / temporary files
+logs/
+*.log
+*.tmp
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# Large raw datasets
+datasets/raw/
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Model experiments / temporary outputs
+models/best_model.pkl
+outputs/

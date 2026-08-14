@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SentinelPE — PE Malware Scanner</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand">SENTINEL<span>PE</span></div>
+    <div class="tag">PORTABLE EXECUTABLE MALWARE DETECTOR</div>
+    <h1>Analyse a PE sample.</h1>
+    <p class="intro">A machine-learning powered classifier for distinguishing malware from goodware.</p>
+  </header>
+
+  <section class="status">
+    <span class="pulse"></span><span id="status">Checking model…</span>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>Live demonstration</h2>
+        <p>Use the real samples from the validated project dataset.</p>
+      </div>
+    </div>
+
+    <div class="choices">
+      <button class="sample good" data-sample="goodware">
+        <strong>Goodware sample</strong>
+        <small>Known benign project record</small>
+      </button>
+      <button class="sample bad" data-sample="malware">
+        <strong>Malware sample</strong>
+        <small>Known malware project record</small>
+      </button>
+    </div>
+
+    <div id="result" class="result hidden">
+      <div id="label" class="label"></div>
+      <div id="confidence"></div>
+      <div id="source" class="source"></div>
+    </div>
+  </section>
+
+  <section class="facts">
+    <div><b>Model</b><span>Random Forest</span></div>
+    <div><b>CV F1</b><span>98.50%</span></div>
+    <div><b>Hold-out F1</b><span>98.60%</span></div>
+    <div><b>ROC-AUC</b><span>99.70%</span></div>
+  </section>
+
+  <footer>SentinelPE · Demonstration interface · Model v1.0.0</footer>
+</div>
+
+<script>
+const statusEl = document.getElementById("status");
+const result = document.getElementById("result");
+const label = document.getElementById("label");
+const confidence = document.getElementById("confidence");
+const source = document.getElementById("source");
+
+fetch("/health").then(r => r.json()).then(d => {
+  statusEl.textContent = d.status === "ok"
+    ? `Model online · ${d.model_type} · ${d.feature_count} features`
+    : "Model unavailable";
+}).catch(() => statusEl.textContent = "API unavailable");
+
+document.querySelectorAll(".sample").forEach(button => {
+  button.addEventListener("click", async () => {
+    document.querySelectorAll(".sample").forEach(b => b.disabled = true);
+    result.className = "result loading";
+    label.textContent = "ANALYSING…";
+    confidence.textContent = "";
+    source.textContent = "";
+
+    try {
+      const r = await fetch("/demo-predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({sample: button.dataset.sample})
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "Prediction failed");
+
+      const pct = d.label === "malware"
+        ? d.probability_malware
+        : d.probability_goodware;
+
+      result.className = "result " + d.label;
+      label.textContent = d.label.toUpperCase();
+      confidence.textContent = `Model-estimated probability: ${(pct * 100).toFixed(2)}%`;
+      source.textContent = d.source || "";
+    } catch (e) {
+      result.className = "result error";
+      label.textContent = "ERROR";
+      confidence.textContent = e.message;
+    } finally {
+      document.querySelectorAll(".sample").forEach(b => b.disabled = false);
+    }
+  });
+});
+</script>
+</body>
+</html>

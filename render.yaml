@@ -3,7 +3,10 @@ services:
     name: sentinelpe
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      mkdir -p models
+      curl -L -o models/best_model.pkl https://github.com/p8180/SentinelPE/releases/download/v1.0.0/best_model.pkl
     startCommand: gunicorn --bind 0.0.0.0:$PORT src.api.app:app
     healthCheckPath: /health
     autoDeployTrigger: checksPass

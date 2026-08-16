@@ -31,7 +31,11 @@ jobs:
         run: pip install pytest
 
       - name: Download model
-        run: mkdir -p models && curl -L -o models/best_model.pkl https://github.com/p8180/SentinelPE/releases/download/v1.0.0/best_model.pkl
+        run: |
+          mkdir -p models
+          gh release download v1.0.0 --repo p8180/SentinelPE --pattern "best_model.pkl" --dir models
+        env:
+          GH_TOKEN: ${{ github.token }}  
 
       - name: Check downloaded model
         run: ls -lh models/best_model.pkl

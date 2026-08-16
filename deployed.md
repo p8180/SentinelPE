@@ -29,7 +29,7 @@ This verifies that the production service is running and that the trained prepro
 
 **URL:** https://sentinelpe.onrender.com/predict
 
-The `/predict` endpoint accepts a POST request containing the 26 expected features and returns:
+The `/predict` endpoint accepts a POST request containing the 26 expected features/characteristics and returns:
 
 - predicted class
 - numeric prediction
@@ -43,7 +43,7 @@ The `/predict` endpoint accepts a POST request containing the 26 expected featur
 - **Model:** Random Forest
 - **Model version:** 1.0.0
 - **Selection metric:** F1
-- **Cross-validation:** Stratified 10-fold CV
+- **Cross-validation:** Stratified 10-fold Cross Validation
 - **Best CV F1:** 0.98496
 - **Number of input features:** 26
 - **Random state:** 42
@@ -148,7 +148,7 @@ Class probabilities
 
 The application is served using **Gunicorn** on Render.
 
-The trained model is distributed separately from the Git repository as a GitHub Release asset because the model file exceeds GitHub's standard repository file-size limit.
+The trained model is distributed separately from the Git repository as a GitHub Release asset because the model file exceeds GitHub's standard repository file-size limit of 100 MB.
 
 ## Source Repository
 

@@ -2,15 +2,14 @@ name: SentinelPE CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,16 +20,20 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: python -m pip install --upgrade pip
-
-      - name: Install project dependencies
-        run: pip install -r requirements-api.txt
-
-      - name: Install pytest
-        run: pip install pytest
-
-      - name: Download model
-        run: mkdir -p models && curl -L -o models/best_model.pkl https://github.com/p8180/SentinelPE/releases/download/v1.0.0/best_model.pkl
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-api.txt
+          pip install pytest
+	
+      - name: Download model for tests
+        run: |
+          mkdir -p models
+          curl -L \ -o models/best_model.pkl https://github.com/p8180/SentinelPE/releases/download/v1.0.0/best_model.pkl
+	  echo "Downloaded model:"
+   	  ls -lh models/best_model.pkl
+          file models/best_model.pkl	
 
       - name: Run automated tests
         run: PYTHONPATH=. python -m pytest -q tests/test_api.py
+
+

@@ -9,12 +9,12 @@ The final experiment used **50,758 labelled samples**:
 - Goodware: **21,116 (41.61%)**
 - Malware: **29,642 (58.39%)**
 
-Labels were explicitly assigned during dataset assembly:
+Labels were assigned explicitly during dataset assembly in the following way:
 
 - `Label = 0` → goodware
 - `Label = 1` → malware
 
-The final production candidate is a **Random Forest classifier**.
+The final model chosen is a **Random Forest classifier**.
 
 ## 2. Dataset ingestion and preparation
 
@@ -22,12 +22,12 @@ The malware source consists of the `malware-by-day` CSV collection. The director
 
 During ingestion:
 
-- Empty/invalid CSV files were skipped rather than deleted.
+- Empty/invalid CSV files were overlooked, not deleted.
 - **1,296** non-empty malware CSV files were processed.
 - **1,501** empty/invalid malware CSV files were skipped.
 - **29,642 malware rows** were loaded.
 - Non-UTF-8 source text was handled using `latin-1` decoding.
-- Goodware and malware records were combined into one labelled dataset.
+- Goodware and malware records that were procured were combined into one labelled dataset.
 
 No source files were modified or deleted.
 
@@ -51,15 +51,15 @@ Total labelled samples = 50,758
 
 A **stratified 80/20 train-test split** was used.
 
-The test set was held out before model selection and hyperparameter tuning and was not used to select the final model.
+The test set was held out before model selection and hyperparameter tuning; this was not used to select the final model.
 
 The training portion was used for model comparison, stratified 10-fold cross-validation, and hyperparameter tuning. The final selected model was then evaluated once on the untouched hold-out test set.
 
 ## 4. Cross-validation methodology
 
-Model selection used **Stratified 10-fold Cross-Validation**. Stratification preserves class proportions across folds and is appropriate for this binary classification task.
+Model selection used **Stratified 10-fold Cross-Validation**. Stratification preserves class proportions across folds and is considered appropriate for the binary classification task of goodware/malware.
 
-The principal model-selection metric was **F1**, balancing precision and recall. Additional metrics were Accuracy, Precision, Recall, F1, and ROC-AUC.
+The principal model-selection metric was **F1**, which balances precision and recall. Additional metrics were Accuracy, Precision, Recall, F1, and ROC-AUC.
 
 ## 5. Candidate model comparison
 
@@ -156,7 +156,7 @@ Feature transformations remain inside the sklearn pipeline so that the same tran
 
 The very high ROC-AUC values warrant caution. Feature definitions should be reviewed to ensure that file identifiers, dataset-provenance fields, timestamps, hashes, or other variables that indirectly encode the source class are not being used as predictive features.
 
-The reported evaluation therefore demonstrates strong performance **on the supplied dataset and feature representation**. It should not automatically be interpreted as equivalent performance on an independently collected malware population.
+The reported evaluation therefore demonstrates strong performance **on the supplied dataset and feature representation**. It should not automatically be interpreted as equivalent performance on any other independently collected malware population.
 
 ## 10. Handling source-data irregularities
 
